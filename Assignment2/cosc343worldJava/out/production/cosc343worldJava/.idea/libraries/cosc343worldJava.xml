@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="cosc343worldJava">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/._cosc343World.jar!/" />
+      <root url="jar://$PROJECT_DIR$/cosc343World.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -21,7 +21,7 @@ public class MyWorld extends World {
    * execute.
      */
     private final int _numTurns = 100;
-    private final int _numGenerations = 300;
+    private final int _numGenerations = 30;
     private int totalFitness = 0;
 
     /* Constructor.  
@@ -175,6 +175,7 @@ public class MyWorld extends World {
             fitnessWeights[i] = old_population[i].getFitness();
         }
 */
+
         //Tournament selection
         int breederMin = 5;
         int breederMax = 10;
@@ -185,19 +186,23 @@ public class MyWorld extends World {
         //adds them to new breeder population if they're not already in there.
         for (int i = 0; i < breederSize; i++) {
             MyCreature nextCandidate = findBestOfSubset(old_population);
+
             int count = i+1;
             while (count != 0) {
                 if (nextCandidate != breeders[count - 1]) {
                     count--;
                 } else if (nextCandidate == breeders[count - 1]) {
                     nextCandidate = findBestOfSubset(old_population);
+
                 }
             }
             breeders[i] = nextCandidate;
+            System.out.println("Check first chromosome of breeder"+i+": "+ breeders[i].chromosome[0]);
             }
         
         //Randomly selects two different breeders from the breeders population,
-        //and then combines there chromosomes to create a new child that is added to the new population
+        // and then combines there chromosomes to create a new child that is added to the new population
+
         for(int i = 0; i < numCreatures; i++){
             int parent1Index = -1 +(int)(Math.random() * (breederSize) +1);
             int parent2Index = -1 +(int)(Math.random() * (breederSize) +1);
@@ -208,20 +213,23 @@ public class MyWorld extends World {
             
             MyCreature parent1 = breeders[parent1Index];
             MyCreature parent2 = breeders[parent2Index];
-            
+
             MyCreature newChild = new MyCreature(super.expectedNumberofPercepts(),super.expectedNumberofActions());
             
             int splitIndex = (int)(Math.random() * (10) +1);
 
+            float[] newChromosomes = new float[11];
+
             for(int c = 0; c < newChild.chromosome.length; c++) {
-                if(c < splitIndex){
-                newChild.chromosome[c] = parent1.chromosome[c];
-                }else{
+                if (c < splitIndex) {
+                    newChild.chromosome[c] = parent1.chromosome[c];
+                } else if (c >= splitIndex) {
                     newChild.chromosome[c] = parent2.chromosome[c];
                 }
+                System.out.println("newchild Chromosome " + c + " equals" + newChild.chromosome[c]);
             }
-            
-            System.out.println(newChild.chromosome[0]);
+            System.out.println("#########################");
+    /*
             //10% chance of mutating a random gene in child chromosome
             int mutateIndex = -1 + (int)(Math.random() * (11) +1);
             int mutateChance = -1 + (int)(Math.random() * (101) + 1);
@@ -230,13 +238,14 @@ public class MyWorld extends World {
             if(mutateChance < 10){
                 newChild.chromosome[mutateIndex] += mutateValue;
             }
-            
+*/
+
             new_population[i] = newChild;
         }
-        for(int i = 0; i < 11; i++){
-        //System.out.println(new_population[0].chromosome[i]);
-        //System.out.println(new_population[1].chromosome[i]);
-        }
+      // for(int i = 0; i < 11; i++){
+      // System.out.println(new_population[0].chromosome[i]);
+      //  System.out.println(new_population[1].chromosome[i]);
+
 
         //Find between 5-10 of the best elites from the old population.
         /**
@@ -304,7 +313,7 @@ public class MyWorld extends World {
         // Return new population of cratures
         return new_population;
 
-    }
+}
 
     public static MyCreature getRandom(MyCreature[] array) {
         int rand = new Random().nextInt(array.length);

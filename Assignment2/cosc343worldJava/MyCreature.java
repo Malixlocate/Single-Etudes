@@ -34,7 +34,6 @@ public class MyCreature extends Creature {
             chromosome[i] = random;
             //System.out.println("chromosome" +i+" value" + chromosome[i]);
         }
-        chromosome[9] = 10f;
 
     }
 
@@ -60,45 +59,48 @@ public class MyCreature extends Creature {
         // the percepts.  You need to replace this code.
         float actions[] = new float[numExpectedActions];
         
-        for (int i = 0; i < 9; i++){
-            actions[i] = 2f;
-        }
-        actions[9] = 3f;
-        actions[10] = 1f;
-        
-        for (int i = 0; i < numPercepts; i++) {
-        if(i != 4){
-            //if nothing on square
-            if(percepts[i] == 0){
-                
-            //if monster on square
-            }else if(percepts[i] == 1){
-                actions[i] += 1f; //chromosome[1];
-                
-            //if other creature on square
-            }else if(percepts[i] == 2){
-                actions[i] += 2f;//chromosome[2];
-            }
-            //if food on square
-            else if(percepts[i] == 3){
-                actions[i] += 9f;//chromosome[3];
-            }
-        }else{
-            //if no food on current sqaure
-            if(percepts[i] == 0){
-                actions[i] += 3f; //chromosome[4];
-            }
-            //if green strawberry on current square
-            if(percepts[i] == 1){
-                actions[i] += 5f; //chromosome[5];
-            }
-            //if red strawberry on current square
-            if(percepts[i] == 2){
-                actions[9] += 10f;
+       // for (int i = 0; i < 9; i++){
+       //     actions[i] = 2f;
+       // }
+       // actions[9] = 3f;
+       // actions[10] = 1f;
+            for (int i = 0; i < numPercepts; i++) {
+                for(int j = 0; j < numExpectedActions; j++){
+
+                    if (i != 4) {
+                    //if nothing on square
+                    if (percepts[i] == 0) {
+                        actions[j] += chromosome[j];
+
+                        //if monster on square
+                    } else if (percepts[i] == 1) {
+                        actions[j] += chromosome[j]; //chromosome[1];
+
+                        //if other creature on square
+                    } else if (percepts[i] == 2) {
+                        //chromosome[2];
+                        actions[j] += chromosome[j];
+                    }
+                    //if food on square
+                    else if (percepts[i] == 3) {
+                        actions[j] += chromosome[j];
+                    }
+                } else {
+                    //if no food on current sqaure
+                    if (percepts[i] == 0) {
+                        actions[j] += chromosome[j];
+                    }
+                    //if green strawberry on current square
+                    if (percepts[i] == 1) {
+                        actions[j] += chromosome[j];
+                    }
+                    //if red strawberry on current square
+                    if (percepts[i] == 2) {
+                        actions[j] += chromosome[j];
+                    }
                 }
             }
         }
-     
             
             /*
             switch (percepts[i]) {

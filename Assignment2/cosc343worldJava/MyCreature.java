@@ -29,7 +29,7 @@ public class MyCreature extends Creature {
     public MyCreature(int numPercepts, int numActions) {
         float min = 0f;
         float max = 11f;
-        for(int i = 0; i < chromosome.length; i++){
+        for (int i = 0; i < chromosome.length; i++) {
             float random = min + rand.nextFloat() * (max - min);
             chromosome[i] = random;
             //System.out.println("chromosome" +i+" value" + chromosome[i]);
@@ -58,89 +58,49 @@ public class MyCreature extends Creature {
         // At the moment, the actions are chosen completely at random, ignoring
         // the percepts.  You need to replace this code.
         float actions[] = new float[numExpectedActions];
-        
-       // for (int i = 0; i < 9; i++){
-       //     actions[i] = 2f;
-       // }
-       // actions[9] = 3f;
-       // actions[10] = 1f;
-            for (int i = 0; i < numPercepts; i++) {
-                for(int j = 0; j < numExpectedActions; j++){
 
-                    if (i != 4) {
+        for (int i = 0; i < numPercepts; i++) {
+            //for (int j = 0; j < numExpectedActions; j++) {
+
+                if (i != 4) {
                     //if nothing on square
                     if (percepts[i] == 0) {
-                        actions[j] += chromosome[j];
+                        actions[i] += chromosome[i];
 
                         //if monster on square
                     } else if (percepts[i] == 1) {
-                        actions[j] += chromosome[j]; //chromosome[1];
+                        actions[i] += chromosome[i]; 
 
                         //if other creature on square
                     } else if (percepts[i] == 2) {
                         //chromosome[2];
-                        actions[j] += chromosome[j];
-                    }
-                    //if food on square
+                        actions[i] += chromosome[i];
+                    } //if food on square
                     else if (percepts[i] == 3) {
-                        actions[j] += chromosome[j];
+                        actions[i] += chromosome[i];
                     }
                 } else {
                     //if no food on current sqaure
                     if (percepts[i] == 0) {
-                        actions[j] += chromosome[j];
-                    }
-                    //if green strawberry on current square
-                    if (percepts[i] == 1) {
-                        actions[j] += chromosome[j];
-                    }
-                    //if red strawberry on current square
-                    if (percepts[i] == 2) {
-                        actions[j] += chromosome[j];
-                    }
-                }
-            }
-        }
-            
-            /*
-            switch (percepts[i]) {
-                
-                case 0: {
-                    if(i == )
-                    actions[9] += 1f;
-                    break;
-                }
+                        actions[10] += chromosome[10];
 
-                case 1: {
-                    if (i == 4) {
-                        if (super.getEnergy() < 25) {
-                            actions[i] += 5f; //chromosome[i];
+                        //if green strawberry on current square
+                    } else if (percepts[i] == 1) {
+                        if(super.getEnergy() < 25){
+                        actions[9] += chromosome[9];
+                        }else{
+                            actions[10] += chromosome[10];
                         }
-                        
-                    break;
-                    }
-                }
-
-                case 2: {
-                    if (i == 4) {
-                        actions[i] += 7f;//chromosome[i];
-                    }
-
-                }
-
-                case 3: {
-                    actions[i] += 10f; //chromosome[i];
-                    break;
-                }
-                
-                case 4: {
                     
-                }
+                        //if red strawberry on current square
+                    } else if (percepts[i] == 2) {
+                        actions[9] += chromosome[9];
+                    }
+                
             }
-
         }
-            */
 
+        
         return actions;
     }
 
@@ -161,8 +121,7 @@ public class MyCreature extends Creature {
      * no invalid format for actions. Only one action can be taken by the
      * creature, and its the one, for which y j is the largest. Your percept to
      * actions model should 4discover on its own what output it needs to produce
-     * based on the selection in the genetic
-algorithm.*
+     * based on the selection in the genetic algorithm.*
      */
     void addToFitness(int input) {
         this.fitness = input;

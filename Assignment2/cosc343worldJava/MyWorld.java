@@ -21,7 +21,7 @@ public class MyWorld extends World {
    * execute.
      */
     private final int _numTurns = 100;
-    private final int _numGenerations = 10;
+    private final int _numGenerations = 300;
     private int totalFitness = 0;
 
     /* Constructor.  
@@ -143,7 +143,7 @@ public class MyWorld extends World {
             } else {
                 nSurvivors += 1;
                 avgLifeTime += (float) _numTurns;
-                creature.addToFitness(_numTurns + energy);
+                creature.addToFitness(_numTurns + energy *2);
             }
 
             totalFitness += creature.fitness;
@@ -169,66 +169,98 @@ public class MyWorld extends World {
         // example code uses all the creatures from the old generation in the
         // new generation.
         //Tournament selection
-        MyCreature[] breeders = findBreeders(old_population);
-
         //Randomly selects two different breeders from the breeders population,
         // and then combines there chromosomes to create a new child that is added to the new population
         for (int i = 0; i < numCreatures; i++) {
+            MyCreature[] breeders = findBreeders(old_population);
+
+            //for (int b = 0; b < breeders.length; b++) {
+             //   System.out.println("****************************************************");
+             //   System.out.println("Breeders " + b + " chromosome: " + Arrays.toString(breeders[b].chromosome));
+
+           // }
 
             MyCreature newChild = makeChild(breeders, breeders.length);
-
+            MyCreature elite = new MyCreature(super.expectedNumberofPercepts(), super.expectedNumberofActions());
             //10% chance of mutating a random gene in child chromosome
             int mutateIndex = -1 + (int) (Math.random() * (11) + 1);
             int mutateChance = -1 + (int) (Math.random() * (101) + 1);
-            float mutateValue = rand.nextFloat() * (1 + 1);
+            float mutateValue = rand.nextFloat() * (5 + 1);
 
-            if (mutateChance < 10) {
+            if (mutateChance < 20) {
                 newChild.chromosome[mutateIndex] += mutateValue;
             }
 
+            for (int b = 0; b < breeders.length; b++) {
+                if (breeders[b].getFitness() > 110) {
+                    elite.chromosome = breeders[b].chromosome;
+                    new_population[i] = elite;
+                    elite.addToFitness(50);
+                } else {
+                    new_population[i] = newChild;
+                }
+            }
+            /*
+           if(i != 0){
+            for(int j = i; j != 0; j --){
+                if(newChild.chromosome[0] == new_population[j-1].chromosome[0]){
+                    newChild = makeChild(breeders, breeders.length);
+                }
+            }
+           }
+             */
+            //System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            //System.out.println("newChild added to new_population chromosome :" + Arrays.toString(newChild.chromosome));
+            //System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             new_population[i] = newChild;
-             //System.out.println(new_population[i].chromosome[0]);
+            //System.out.println(new_population[i].chromosome[0]);
+            /*
+            if (new_population[i].chromosome[0] == old_population[i].chromosome[0]) {
+                breeders = findBreeders(old_population);
+                newChild = makeChild(breeders, breeders.length);
+                new_population[i] = newChild;
+            }
 
-        }
-/*
-        if (new_population[i].chromosome[0] == old_population[i].chromosome[0]) {
-            breeders = findBreeders(old_population);
-            newChild = makeChild(breeders, breeders.length);
-            new_population[i] = newChild;
+        */
+        }  
+        
+        /*
+        System.out.println("childrenHere");
+        for(int i = 0; i < numCreatures; i++){
+            System.out.println(Arrays.toString(new_population[i].chromosome));
         }
         */
         
-    
+        return new_population;
 
-    return new_population ;
-}
+    }
 
-public MyCreature getRandom(MyCreature[] array) {
+    public MyCreature getRandom(MyCreature[] array) {
         int rand = new Random().nextInt(array.length);
         return array[rand];
     }
 
+    //confirmed on first generation, subsets never get the same value
     public MyCreature findBestOfSubset(MyCreature[] old_population) {
         int size = old_population.length / 5;
         MyCreature[] subset = new MyCreature[size];
         //generate subset randomly selecting from old population
         for (int j = 0; j < subset.length; j++) {
             MyCreature randomSelect = getRandom(old_population);
-            
+
             int count = j + 1;
             while (count != 0) {
                 if (randomSelect != subset[count - 1]) {
                     count--;
                 } else if (randomSelect == subset[count - 1]) {
-                    randomSelect = findBestOfSubset(old_population);
+                    randomSelect = getRandom(old_population);
 
                 }
             }
             subset[j] = randomSelect;
-        
-            
-            System.out.println("subset "+ j + " chromosome 0 value = " + subset[j].chromosome[0]);
-            System.out.println("#############################");
+
+           // System.out.println("subset " + j + ": " + Arrays.toString(subset[j].chromosome));
+           // System.out.println("#############################");
         }
         //find best individual of each subset
         int max = subset[0].fitness;
@@ -240,23 +272,23 @@ public MyCreature getRandom(MyCreature[] array) {
             }
 
         }
-       System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-       System.out.println("randomly picked creaure chrmosome 0 value: " + subset[maxIndex].chromosome[0]);
-       System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+       // System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+       // System.out.println("randomly picked creaure chrmosome: " + Arrays.toString(subset[maxIndex].chromosome));
+       // System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         return subset[maxIndex];
     }
 
     public MyCreature makeChild(MyCreature[] breeders, int breederSize) {
+
+        int parentIndex; 
+        //int parent2Index = -1 + (int) (Math.random() * (breederSize) + 1);
+
+        //while (parent2Index == parent1Index) {
+        //    parent2Index = -1 + (int) (Math.random() * (breederSize) + 1);
+       // }
+
         
-        int parent1Index = -1 + (int) (Math.random() * (breederSize) + 1);
-        int parent2Index = -1 + (int) (Math.random() * (breederSize) + 1);
-
-        while (parent2Index == parent1Index) {
-            parent2Index = -1 + (int) (Math.random() * (breederSize) + 1);
-        }
-
-        MyCreature parent1 = breeders[parent1Index];
-        MyCreature parent2 = breeders[parent2Index];
+       // MyCreature parent2 = breeders[parent2Index];
 
         /*
         System.out.println("parent1Index: " + parent1Index + "    parent2Index: " + parent2Index);
@@ -266,21 +298,20 @@ public MyCreature getRandom(MyCreature[] array) {
          */
         MyCreature newChild = new MyCreature(super.expectedNumberofPercepts(), super.expectedNumberofActions());
 
-        int splitIndex = (int) (Math.random() * (10) + 1);
+        //int splitIndex = (int) (Math.random() * (10) + 1);
+
+        for (int c = 0; c < newChild.chromosome.length; c++) {
+           // if (c < splitIndex) {
+           parentIndex = -1 + (int) (Math.random() * (breederSize) + 1);
+           MyCreature parent = breeders[parentIndex];
+                newChild.chromosome[c] = parent.chromosome[c];
+           // } else if (c >= splitIndex) {
+            //    newChild.chromosome[c] = parent2.chromosome[c];
+            }
 
         
 
-        for (int c = 0; c < newChild.chromosome.length; c++) {
-            if (c < splitIndex) {
-                newChild.chromosome[c] = parent1.chromosome[c];
-            } else if (c >= splitIndex) {
-                newChild.chromosome[c] = parent2.chromosome[c];
-            }
-
-        }
-        System.out.println("**************************************************");
-        System.out.println("newChild reutrned from makeChild chromosome 0 value: " +newChild.chromosome[0]);
-        System.out.println("**************************************************");
+        //System.out.println(Arrays.toString(newChild.chromosome));
         return newChild;
     }
 
@@ -293,26 +324,31 @@ public MyCreature getRandom(MyCreature[] array) {
         //finds the best candidates from subsets of old population and,
         //adds them to new breeder population if they're not already in there.
         for (int i = 0; i < breederSize; i++) {
-            
-            MyCreature nextCandidate = findBestOfSubset(old_population);
-            
-            int count = i + 1;
-            while (count != 0) {
-                if (nextCandidate != breeders[count - 1]) {
-                    count--;
-                } else if (nextCandidate == breeders[count - 1]) {
-                    nextCandidate = findBestOfSubset(old_population);
 
+            MyCreature nextCandidate = findBestOfSubset(old_population);
+
+            if (i > 0) {
+                int count = i;
+                while (count != 0) {
+                    if (nextCandidate.chromosome[0] != breeders[count - 1].chromosome[0]) {
+                        count--;
+                    } else { //if (nextCandidate.chromosome[0] == breeders[count - 1].chromosome[0]) {
+                        nextCandidate = findBestOfSubset(old_population);
+
+                    }
                 }
             }
+
             breeders[i] = nextCandidate;
-        }
-        for(int j = 0; j < breeders.length; j++){
-            System.out.println("Breeder "+j+" chromosome 0 value: "+breeders[j].chromosome[0]);
+
         }
         return breeders;
+
     }
 
+    public static boolean contains(MyCreature breeders[], float chromosome[]) {
+        return Arrays.stream(breeders).anyMatch(chromosome::equals);
+    }
 }
 
 //Find between 5-10 of the best elites from the old population.
@@ -354,16 +390,3 @@ public MyCreature getRandom(MyCreature[] array) {
                 newChild.chromosome[c] = parent.chromosome[c];
             }
  */
-// if breeder population all have fitness below 90 then take breeders from neely generated population.
-        /*
-        int fitnessCheck = 0;
-        for (int i = 0; i < breeders.length; i++) {
-            if (breeders[i].fitness < 90) {
-                fitnessCheck++;
-            }
-        }
-
-        if (fitnessCheck == breeders.length) {
-            old_population = firstGeneration(numCreatures);
-        }
-*/

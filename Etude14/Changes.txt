@@ -1,0 +1,5 @@
+Changes made to main.c :
+
+    1. Fixed spelling errors.
+    2. Renamed functions to be less obscure.
+    3. Added fscanf call to while loop with != EOF so that it takes more than 1 input

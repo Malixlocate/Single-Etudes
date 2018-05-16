@@ -25,18 +25,14 @@ public class dateValidatorApp {
 
             if (validator.matches(date) == true){
                 trueCount++;
-                System.out.println("Correct");
             }
 
             if (validator.matches(date) == false){
                 falseCount++;
-                System.out.println("Wrong");
                 }
         }
         System.out.println(trueCount+" valid dates entered");
         System.out.println(falseCount+" invalid dates entered");
     }
-
-
 }
 

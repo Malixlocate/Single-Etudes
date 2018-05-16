@@ -6,8 +6,9 @@ class dateValidator implements validator {
 
 
     private static Pattern pattern1 = Pattern.compile(
-            //  "(?!5)\\d"
-            "(0[1-9]|1[0-2])/?(0(?!2|4|6|9)\\d|1(?!1|3|4|5|6|7|8|9)\\d)/?(19[5-9][0-9]|20[0-4][0-9])"
+            //"((?!0)\\d|0(?!0)\\d|1\\d|3(?![2-9])\\d)"
+            "
+            ///?   (0(?!2|4|6|9)\\d|1(?!1|3|4|5|6|7|8|9)\\d)  /?  (19[5-9][0-9]|20[0-4][0-9])"
             );
     private static Pattern pattern2 = Pattern.compile("0");
     private static Pattern pattern3 = Pattern.compile("0");

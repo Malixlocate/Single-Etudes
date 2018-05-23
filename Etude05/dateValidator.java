@@ -28,7 +28,7 @@ class dateValidator{
         ("(2|02|FEB)");
 
     private static Pattern years = Pattern.compile 
-        ("(17|18|19|2[0-9])[0-9]{2}|3000|(0\\d|\\d\\d)");
+        ("(((175[3-9])|(17[6-9][0-9])|(18|19|2[0-9])[0-9]{2})|3000)|(0\\d|\\d\\d)");
 
     private static Pattern leapYears = Pattern.compile
         ("(2000|2400|2800|3000|((18|19|2[0-9])(0[48]|[2468][048]|[13579][26])|(17([68][048]|(56|[79][26])))))"); 
@@ -36,9 +36,23 @@ class dateValidator{
     private static Pattern monthsFormat = Pattern.compile
         ("(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|NOV|OCT|DEC|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Nov|Oct|Dec|jan|feb|mar|may|jun|jul|aug|sep|nov|oct|dec)");
 
-    public static String formatError = "Input entered is invalid: Please enter a date.";
+    private static Pattern stringNumeric = Pattern.compile("-?\\d+(\\.\\d+)?");
+
+    private static String inputError = "Input entered is invalid: Please enter a date.";
+    private static String formatError = "Seperator error.";
 
     private static Map<String, String> dictionary = new HashMap<String, String>();
+
+    private static String dayOutOfRange = "Invalid day entered: Day out of range.";
+    private static String monthOutOfRange = "Invalid month entered: Month out of range.";
+    private static String yearOutOfRange = "Invalid year entered: Year out of range.";
+
+    private static String dayIncorrectFormat = "Invalid day entered: Day format incorrect.";
+    private static String monthIncorrectFormat = "Invalid month entered: Month format incorrect.";
+    private static String yearIncorrectFormat = "Invalid year entered: Year format incorrect.";
+
+
+    private int leapYear = 0;
 
     public void createDictionary(){
         dictionary.put("01", "Jan"); dictionary.put("02", "Feb"); dictionary.put("03", "Mar");
@@ -49,28 +63,25 @@ class dateValidator{
 
     public String getYear(String date){
         String year = "";
+        int count = 0;
 
         if(date.contains ("/")){
             year = date.substring(date.indexOf("/")+1);
             year = year.substring(year.indexOf("/")+1);
-            if(year.contains("/")){
-                year = formatError;
-            }
-
+           // if(year.contains("/")|| year.contains("-") || year.contains(" ")){
+           //     year = formatError;
         }else if(date.contains("-")){
             year = date.substring(date.indexOf("-")+1);
             year = year.substring(year.indexOf("-")+1);
-            if(year.contains("-")){
-                year = formatError;
-            }
+           // if(year.contains("-") || year.contains("/") || year.contains(" ")){
+           //     year = formatError;
         }else if(date.contains(" ")){
             year = date.substring(date.indexOf(" ")+1);
             year = year.substring(year.indexOf(" ")+1);
-            if(year.contains(" ")){
-                year = formatError;
-            }
+           // if(year.contains(" ") || year.contains("/")|| year.contains(" ")){
+           //     year = formatError;
         }else{
-            year = formatError;
+            year = inputError;
         }
         return year;
     }
@@ -78,27 +89,27 @@ class dateValidator{
 
     public String getMonth(String date){
         String month = "";
-
+        
         if(date.contains ("/")){
             month = date.substring(date.indexOf("/")+1);
             try{
                 month = month.substring(0, month.indexOf("/"));
             }catch(StringIndexOutOfBoundsException e){
-                month = formatError;
+                month = inputError;
             }
         }else if(date.contains("-")){
             month = date.substring(date.indexOf("-")+1);
             try{
                 month = month.substring(0, month.indexOf("-"));
             }catch(StringIndexOutOfBoundsException e){
-                month = formatError;
+                month = inputError;
             }
         }else if(date.contains(" ")){
             month = date.substring(date.indexOf(" ")+1);
             try{
                 month = month.substring(0, month.indexOf(" "));
             }catch(StringIndexOutOfBoundsException e){
-                month = formatError;
+                month = inputError;
             }
         }else{
             month = formatError;
@@ -130,6 +141,8 @@ class dateValidator{
         String year = getYear(date);
         String month = getMonth(date);
         String day = getDay(date);
+        
+        
 
         if(year.length() < 4){
             if(Integer.parseInt(year) < 50){
@@ -154,11 +167,144 @@ class dateValidator{
         }
 
 
-        System.out.println("Output:");
+        //System.out.println("Output:");
         System.out.println(day +" "+ month +" "+ year);
     }
 
+    public void validateDays(String date){
+        String day = getDay(date);
+        if(matchDays30(day) == true){
+            printDate(date);
+        }else if(matchDays31(day) == true){
+            printDate(date);
+        }else if(matchDaysFebNLY(day) == true){
+            printDate(date);
+        }else{
+            System.out.println(dayOutOfRange);
+        }
+    }
 
+    public void validateDays31(String date){
+        String day = getDay(date);
+        if(matchDays31(day) == true){
+            printDate(date);
+        }else{
+            System.out.println(dayOutOfRange);
+        }
+    }
+
+    public void validateDays30(String date){
+        String day = getDay(date);
+        if(matchDays30(day) == true){
+            printDate(date);
+        }else{
+            System.out.println(dayOutOfRange);
+        }
+    }
+
+    public void validateDaysFebNLY(String date){
+        String day = getDay(date);
+        if(matchDaysFebNLY(day) == true){
+            printDate(date);
+        }else{
+            System.out.println(dayOutOfRange);
+        }
+    }
+
+    public void valdiateDaysFebLY(String date){
+        String day = getDay(date);
+        if(matchDaysFebLY(day) == true){
+            printDate(date);
+        }else{
+            System.out.println(dayOutOfRange);
+        }
+    }
+    public void validateFebDaysLY(String date){
+        String day = getDay(date);
+        if(matchDaysFebLY(day) == true){
+            printDate(date);
+        }else{
+            System.out.println(dayOutOfRange);
+        }
+    }
+
+
+    public void validateMonths(String date){
+        String month = getMonth(date);
+        month = month.toUpperCase();
+        if(matchMonths31(month) == true){
+            validateDays31(date);
+        }else if(matchMonths30(month) == true){
+            validateDays30(date);
+        }else if(matchFeb(month) == true && leapYear == 0){
+            validateDaysFebNLY(date);
+        }else if(matchFeb(month) == true && leapYear == 1){
+            validateFebDaysLY(date);
+        }else{
+            System.out.println(monthOutOfRange);
+        }
+    }
+
+    public void validateYear(String date){
+        String year = getYear(date);
+
+        if(matchLeapYear(year) == true){
+            leapYear = 1;
+            validateMonths(date);
+        }else if(matchYear(year) == true){
+            validateMonths(date);
+        }else{
+            System.out.println(yearOutOfRange);
+        }
+    }
+
+    public void validateDate(String date){
+        String year = getYear(date);
+        String month = getMonth(date);
+        String day = getDay(date);
+        //Checks day, month, year lengths to see if input is valid 
+        if(day.length() == 0 && month.length() == 1 && year.length() == 0){
+            System.out.println(inputError);
+        }else if(day.length() == 0 && month.length() == 0 && year.length() == 0){
+            System.out.println(inputError);
+        }else if(year.length() == 46){
+            System.out.println(inputError);
+            
+        //Checks to see if the get calls have thrown a seperator error
+         }else if(month.equals(inputError)){
+            System.out.println(inputError); 
+        }else if(year.equals(formatError) || month.equals(formatError) || day.equals(formatError)){
+            System.out.println(formatError);
+         
+        //Checks the length of the year, month, day to make sure it's a valid format
+        }else if(year.length() < 2 || year.length() == 3 || year.length() > 4){
+            System.out.println(yearIncorrectFormat);
+            System.out.println("here");
+        }else if(month.length() == 0 || month.length() > 3){
+            System.out.println(monthIncorrectFormat);
+        }else if(month.length() > 2 && matchMonthsFormat(month) != true){
+            System.out.println(monthIncorrectFormat);
+        }else if(day.length() == 0 || day.length() > 2){
+            System.out.println(dayIncorrectFormat);
+
+                
+        //Checks to see if the year, month, and day are numeric when supposed to be
+        }else if(matchStringNumeric(year) == false){
+            System.out.println(yearIncorrectFormat);
+        }else if(month.length() != 3 && matchStringNumeric(month) == false){
+            System.out.println(monthIncorrectFormat);
+        }else if(matchStringNumeric(day) == false){
+            System.out.println(dayIncorrectFormat);
+
+        }else{
+            validateYear(date);
+        }
+      }
+
+
+
+    /* These methods all access the regular expressions 
+     * at the top of the file to check that the dates match the specified ranges */
     public boolean matchLeapYear(String year){
         return leapYears.matcher(year).matches();
     }
@@ -197,6 +343,10 @@ class dateValidator{
     public boolean matchMonthsFormat(String month){
         return monthsFormat.matcher(month).matches();
     }
+
+    public boolean matchStringNumeric(String input){
+        return stringNumeric.matcher(input).matches();
+        }
 
 
 }

@@ -1,5 +1,7 @@
 import java.util.regex.Pattern;
 import java.util.Scanner;
+import java.util.Map;
+import java.util.HashMap;
 import java.lang.System;
 
 class dateValidator{
@@ -8,13 +10,13 @@ class dateValidator{
         ("((?!0)\\d|0(?!0)\\d|1\\d|2\\d|30|31)");
 
     private static Pattern months31 = Pattern.compile
-        ("((?!0|2|4|6|9)\\d|0(?!0|2|4|6|9)\\d|10|12|Jan|Mar|May|Jul|Aug|Oct|Dec)");
+        ("((?!0|2|4|6|9)\\d|0(?!0|2|4|6|9)\\d|10|12|JAN|MAR|MAY|JUL|AUG|OCT|DEC)");
 
     private static Pattern days30 = Pattern.compile
         ("((?!0)\\d|0(?!0)\\d|1\\d|2\\d|30)");
 
     private static Pattern months30 = Pattern.compile
-        ("((4|6|9|)|0(4|6|9)|11|Apr|Jun|Sep|Nov)");
+        ("((4|6|9|)|0(4|6|9)|11|APR|JUN|SEP|NOV)");
 
     private static Pattern daysFebNLY = Pattern.compile
         ("((?!0)\\d|0(?!0)\\d|1\\d|2(?!9)\\d)");
@@ -31,70 +33,19 @@ class dateValidator{
     private static Pattern leapYears = Pattern.compile
         ("(2000|2400|2800|3000|((18|19|2[0-9])(0[48]|[2468][048]|[13579][26])|(17([68][048]|(56|[79][26])))))"); 
 
-    public static String seperatorError = "seperator error, seperator format invalid";
+    private static Pattern monthsFormat = Pattern.compile
+        ("(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|NOV|OCT|DEC|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Nov|Oct|Dec|jan|feb|mar|may|jun|jul|aug|sep|nov|oct|dec)");
 
+    public static String formatError = "Input entered is invalid: Please enter a date.";
 
-   public String[] splitDate(String date){
-   
-   String[] splitDate = new String[3];
-   String year = "";
-   String month = "";
-   String day = "";
-    
-    if(date.contains ("/")){
-            year = date.substring(date.indexOf("/")+1);
-            year = year.substring(year.indexOf("/")+1);
+    private static Map<String, String> dictionary = new HashMap<String, String>();
 
-        }else if(date.contains("-")){
-            year = date.substring(date.indexOf("-")+1);
-            year = year.substring(year.indexOf("-")+1);
-
-        }else if(date.contains(" ")){
-            year = date.substring(date.indexOf(" ")+1);
-            year = year.substring(year.indexOf(" ")+1);
-}else{
-year = seperatorError;
-
-splitDate[2] = year;
-
-    if(date.contains ("/")){
-            month = date.substring(date.indexOf("/")+1);
-            month = month.substring(0, month.indexOf("/"));
-
-        }else if(date.contains("-")){
-            month = date.substring(date.indexOf("-")+1);
-            month = month.substring(0, month.indexOf("-"));
-
-        }else if(date.contains(" ")){
-            month = date.substring(date.indexOf(" ")+1);
-            month = month.substring(0, month.indexOf(" "));
-        }
-
-        month = month.toUpperCase();
-        splitDate[1] = month;
-
-        if(date.contains("/")){
-            day = date.substring(0, date.indexOf("/"));
-            day = day.substring(0,date.indexOf("/"));
-
-        }else if(date.contains("/")){
-            day = date.substring(0, date.indexOf("-"));
-            day = day.substring(0,date.indexOf("-"));
-
-        }else if(date.contains("/")){
-            day = date.substring(0, date.indexOf("-"));
-            day = day.substring(0,date.indexOf("-"));
-}
-
-        splitDate[0] = day;
-        }
-        return splitDate;
+    public void createDictionary(){
+        dictionary.put("01", "Jan"); dictionary.put("02", "Feb"); dictionary.put("03", "Mar");
+        dictionary.put("04", "Apr"); dictionary.put("05", "May"); dictionary.put("06", "Jun");
+        dictionary.put("07", "Jul"); dictionary.put("08", "Aug"); dictionary.put("09", "Sep");
+        dictionary.put("10", "Nov"); dictionary.put("11", "Oct"); dictionary.put("12", "Dec");
     }
-
-
-
-
-    
 
     public String getYear(String date){
         String year = "";
@@ -102,39 +53,56 @@ splitDate[2] = year;
         if(date.contains ("/")){
             year = date.substring(date.indexOf("/")+1);
             year = year.substring(year.indexOf("/")+1);
+            if(year.contains("/")){
+                year = formatError;
+            }
 
         }else if(date.contains("-")){
             year = date.substring(date.indexOf("-")+1);
             year = year.substring(year.indexOf("-")+1);
-
+            if(year.contains("-")){
+                year = formatError;
+            }
         }else if(date.contains(" ")){
             year = date.substring(date.indexOf(" ")+1);
             year = year.substring(year.indexOf(" ")+1);
-
-        }else{
-            year = seperatorError;
-
+            if(year.contains(" ")){
+                year = formatError;
             }
-            return year;
+        }else{
+            year = formatError;
+        }
+        return year;
     }
+
 
     public String getMonth(String date){
         String month = "";
 
         if(date.contains ("/")){
             month = date.substring(date.indexOf("/")+1);
-            month = month.substring(0, month.indexOf("/"));
-
+            try{
+                month = month.substring(0, month.indexOf("/"));
+            }catch(StringIndexOutOfBoundsException e){
+                month = formatError;
+            }
         }else if(date.contains("-")){
             month = date.substring(date.indexOf("-")+1);
-            month = month.substring(0, month.indexOf("-"));
-
+            try{
+                month = month.substring(0, month.indexOf("-"));
+            }catch(StringIndexOutOfBoundsException e){
+                month = formatError;
+            }
         }else if(date.contains(" ")){
             month = date.substring(date.indexOf(" ")+1);
-            month = month.substring(0, month.indexOf(" "));
+            try{
+                month = month.substring(0, month.indexOf(" "));
+            }catch(StringIndexOutOfBoundsException e){
+                month = formatError;
+            }
+        }else{
+            month = formatError;
         }
-
-        month = month.toUpperCase();
         return month;
     }
 
@@ -145,60 +113,51 @@ splitDate[2] = year;
             day = date.substring(0, date.indexOf("/"));
             day = day.substring(0,date.indexOf("/"));
 
-        }else if(date.contains("/")){
+        }else if(date.contains("-")){
             day = date.substring(0, date.indexOf("-"));
             day = day.substring(0,date.indexOf("-"));
 
-        }else if(date.contains("/")){
-            day = date.substring(0, date.indexOf("-"));
-            day = day.substring(0,date.indexOf("-"));
-}
+        }else if(date.contains(" ")){
+            day = date.substring(0, date.indexOf(" "));
+            day = day.substring(0,date.indexOf(" "));
+        }else{
+            day = formatError;
+        }
         return day;
     }
 
-/*
-    public int checkYear(String year){
+    public void printDate(String date){
+        String year = getYear(date);
+        String month = getMonth(date);
+        String day = getDay(date);
 
-        if (Integer.parseInt(year) % 4 == 0 && Integer.parseInt(year) % 100 !=0)
-        {return 1;}
+        if(year.length() < 4){
+            if(Integer.parseInt(year) < 50){
+                year = "20" + year;
+            }else if(Integer.parseInt(year) > 49){
+                year = "19" + year;
+            }
+        }
 
-        else if (Integer.parseInt(year) % 400 == 0)
-        {return 1;}
+        if(month.length() < 3){
+            if(month.length() < 2){
+                month = "0" + month;
+            }
+            month = dictionary.get(month);
+        }else if(month.length() == 3){
+            month = month.toLowerCase();
+            month = month.substring(0,1).toUpperCase() + month.substring(1);
+        }
 
-        else
-        {return 0;}
+        if(day.length() < 2){
+            day = "0" + day;
+        }
 
+
+        System.out.println("Output:");
+        System.out.println(day +" "+ month +" "+ year);
     }
 
-*/
-
-    /*
-       public int checkMonth(String date){
-
-       if(     month.equals("01") || month.equals("03") || month.equals("05") || 
-       month.equals("07") || month.equals("08") || month.equals("10") || 
-       month.equals("12") || month.equals("1")  || month.equals("3")  || 
-       month.equals("5")  || month.equals("7")  || month.equals("8")  ||
-       month.equals("JAN")|| month.equals("MAR")|| month.equals("MAY")|| 
-       month.equals("JUL")|| month.equals("AUG")|| month.equals("OCT")|| 
-       month.equals("DEC"))
-
-       {return 1;}
-
-       else if(month.equals("04") || month.equals("06") || month.equals("09") || 
-       month.equals("11") || month.equals("4")  || month.equals("6")  || 
-       month.equals("9")  || month.equals("APR")|| month.equals("JUN")|| 
-       month.equals("SEP")|| month.equals("NOV"))
-
-       {return 2;}
-
-       else
-
-       {return 3;}
-
-       }
-
-*/
 
     public boolean matchLeapYear(String year){
         return leapYears.matcher(year).matches();
@@ -233,6 +192,10 @@ splitDate[2] = year;
     }
     public boolean matchDays31(String day){
         return days31.matcher(day).matches();
+    }
+
+    public boolean matchMonthsFormat(String month){
+        return monthsFormat.matcher(month).matches();
     }
 
 

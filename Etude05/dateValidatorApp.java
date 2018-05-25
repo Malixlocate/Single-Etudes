@@ -7,7 +7,6 @@ public class dateValidatorApp {
 
 
 
-
     public static void main(String[]args){
 
         String date = "";
@@ -21,8 +20,8 @@ public class dateValidatorApp {
               //  System.out.println("-----------------------------------------------------------");
                 date = input.nextLine();
             //    System.out.println("test "+count);
-                System.out.println("Input:");
-                System.out.println(date);
+            //    System.out.println("Input:");
+            //    System.out.println(date);
              //   System.out.println();
 
                 date = date.trim();

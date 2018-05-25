@@ -1,0 +1,18 @@
+ global layer
+ 70     layer+=1
+ 71     if layer < 3:
+ 72         point = leftPoint
+ 73     elif layer < 6:
+ 74         point = centerPoint
+ 75     elif layer < 9:
+ 76         point = rightPoint
+ 77     elif layer < 12:
+ 78         point = topLeftPoint
+ 79     elif layer < 15:
+ 80         point = topRightPoint
+ 81     elif layer < 18:
+ 82         point = bottomLeftPoint
+ 83     elif layer < 21:
+ 84         point = bottomRightPoint
+ 85     else: return
+

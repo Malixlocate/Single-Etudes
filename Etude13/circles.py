@@ -1,7 +1,14 @@
 from graphics import * 
 import random
+import sys
+import fileinput
+from argparse import ArgumentParser
 
-windowWidth = 1000
+parser = ArgumentParser()
+parser.add_argument('-file', metavar='FILE', help='file to give circles inputs')
+args = parser.parse_args()
+
+windowWidth= 1000
 windowHeight = 1000
 windowTitle = "Circ-les"
 win = GraphWin(windowTitle, windowWidth, windowHeight)
@@ -10,6 +17,16 @@ yCoord = 500
 point = Point(xCoord, yCoord)
 radius = 500
 layer = 0
+
+if(args.file):    
+    with open(args.file) as file:
+        inputs = []
+        for line in open('test.txt'):
+            line = [line.rstrip('\n')]
+            for item in line:
+                inputs.append(item)
+        print(inputs) 
+
 
 def colourGene():
     r = random.randrange(256)
@@ -24,75 +41,63 @@ def drawCircle(point, radius):
     c.draw(win)                  # draw the Circle object to the window
     c.setFill(colour)
 
-def drawC(point, radius, depth):
+def sevenCircles(point, radius, depth, colour):
+    
+
     if depth == 0:
         return
 
-    drawCircles(point, radius)
-    drawC(point, radius/3, depth - 1)
-    #drawC(Point(c.p1.getX(), c.p1.getY() - c.getRadius()/1.34), radius,depth-1)
-    #drawC(point, radius/3, depth-1)
-    #drawC(Point(166.6666666666667, 500.0), radius / 3, depth - 1)
-    #drawC(Point(833.3333333333333, 500.0), radius / 3, depth - 1)
-    #drawC(Point(333.33333333333337, 208.95522388059706), radius / 3, depth - 1)
-   # drawC(Point(666.6666666666666, 208.95522388059706), radius / 3, depth - 1)
-   # drawC(Point(333.33333333333337, 791.044776119403), radius / 3, depth - 1)
-    #drawC(Point(666.6666666666666, 791.044776119403), radius / 3, depth - 1)
-   # drawC(Point(c.p2.getX() + c.getRadius(), c.p1.getY() + c.getRadius()), radius/3, depth-1)
-   # drawC(Point(c.p2.getX() + c.getRadius(), c.p1.getY() + c.getRadius()), radius / 3, depth - 1)
-   # drawC(Point(c.p2.getX() + c.getRadius(), c.p1.getY() + c.getRadius()), radius / 3, depth - 1)
-   # drawC(Point(c.p2.getX() + c.getRadius(), c.p1.getY() + c.getRadius()), radius / 3, depth - 1)
-
-def drawCircles(point, radius):
-    
-   # if depth == 0:
-  #      return
-
-    colour = colourGene()
     radius = radius / 3
-    
-    center = Circle(point,radius)
+
+    centerPoint = point
+    center = Circle(centerPoint,radius)
     center.draw(win)
     center.setFill(colour)
 
     relative = center.getRadius()
 
-    point = Point (center.p1.getX() - relative, center.p1.getY() + relative)
-    left = Circle(point,radius)
+    leftPoint = Point (center.p1.getX() - relative, center.p1.getY() + relative)
+    left = Circle(leftPoint,radius)
     left.draw(win)
     left.setFill(colour)
-    print (point)
 
-    point = Point(center.p2.getX() + relative, center.p1.getY() + relative)
-    right = Circle(point,radius)
+    rightPoint = Point(center.p2.getX() + relative, center.p1.getY() + relative)
+    right = Circle(rightPoint,radius)
     right.draw(win)
     right.setFill(colour)
-    print (point)
 
-    point = Point(center.p1.getX(),center.p1.getY() - relative/1.34)
-    topLeft = Circle(point,radius)
+    topLeftPoint = Point(center.p1.getX(),center.p1.getY() - relative/1.34)
+    topLeft = Circle(topLeftPoint,radius)
     topLeft.draw(win)
     topLeft.setFill(colour)
-    print(point)
-    point = Point(center.p2.getX(),center.p1.getY() - relative/1.34)
-    topRight = Circle(point,radius)
+
+    topRightPoint = Point(center.p2.getX(),center.p1.getY() - relative/1.34)
+    topRight = Circle(topRightPoint,radius)
     topRight.draw(win)
     topRight.setFill(colour)
-    print(point)
-    point = Point(center.p1.getX(), center.p2.getY() + relative/1.34)
-    bottomLeft = Circle(point,radius)
+
+    bottomLeftPoint = Point(center.p1.getX(), center.p2.getY() + relative/1.34)
+    bottomLeft = Circle(bottomLeftPoint,radius)
     bottomLeft.draw(win)
     bottomLeft.setFill(colour)
-    print(point)
-    point = Point(center.p2.getX(),center.p2.getY() + relative/1.34)
-    bottomRight = Circle(point,radius)
+
+    bottomRightPoint = Point(center.p2.getX(),center.p2.getY() + relative/1.34)
+    bottomRight = Circle(bottomRightPoint,radius)
     bottomRight.draw(win)
     bottomRight.setFill(colour) 
-    print(point)
-    #drawCircles(point, radius, depth + -1)
-drawCircle(point,radius)
-drawC(point, radius, 4)
-#drawCircles(point,radius,1)
+
+    sevenCircles(leftPoint,radius,depth -1,colour)
+    sevenCircles(centerPoint,radius,depth-1,colour)
+    sevenCircles(rightPoint,radius,depth-1,colour) 
+    sevenCircles(topLeftPoint,radius,depth-1,colour)
+    sevenCircles(topRightPoint,radius,depth-1,colour)
+    sevenCircles(bottomLeftPoint,radius,depth-1,colour)
+    sevenCircles(bottomRightPoint,radius,depth-1,colour)
+
+if(args.file):
+  print(inputs[0][3:])
+  colour = inputs[0][3:]
+else: colour = colourGene()  
 #drawCircle(point,radius)
-#drawCircles(point,radius, 3)
-win.getMouse()
+#sevenCircles(point,radius,5,colour)
+#win.getMouse()

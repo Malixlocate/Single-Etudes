@@ -2,6 +2,7 @@ from graphics import *
 import random
 import shlex
 from argparse import ArgumentParser
+from fractions import Fraction
 
 parser = ArgumentParser()
 parser.add_argument('-file', metavar='FILE', help='file to give circles inputs')
@@ -17,7 +18,7 @@ point = Point(xCoord, yCoord)
 radius = 500
 depth = 3
 colours = []
-ratio = []
+ratios = []
 
 if(args.file):    
     with open(args.file) as file:
@@ -39,12 +40,26 @@ def colourGene():
     return color_rgb(r,g,b)
 
 def initializeColours():
+    if(args.file):
+        for i in range(len(inputs)):
+            inputColour = color_rgb((int(inputs[i][1])),int((inputs[i][2])),int((inputs[i][3])))
+            colours.append(inputColour)
+            # colours.reverse()
+        else:
+            for i in range(depth):
+                colours.append(colourGene())
+
+def initializeRatios():
     for i in range(len(inputs)):
-        inputColour = color_rgb((int(inputs[i][1])),int((inputs[i][2])),int((inputs[i][3])))
-        colours.append(inputColour)
-        colours.reverse()
-def drawCircle(point, radius):
-    colour = colourGene()
+        if "/" in inputs[i][0]:
+            inputRatio = float(Fraction(inputs[i][0]))
+        else:
+            inputRatio = float((inputs[i][0]))
+        ratios.append(inputRatio)
+    ratios.reverse()
+
+def drawCircle(point, radius, colour):
+
     c = Circle(point, radius)    # instantiate a Circle object
     c.draw(win)                  # draw the Circle object to the window
     c.setFill(colour)
@@ -54,12 +69,18 @@ def sevenCircles(point, radius, depth, colour):
 
     if depth == 0:
         return
-
-    radius = radius / 3
+    drawCircle(point, radius, colour)
 
     if(args.file):
-        #radius = radius / (ratio[depth])
+        #radius = radius / (ratios[depth-1])
         colour = colours[depth-1]
+    else:
+        radius = radius / 3
+
+
+
+    radius =radius/3
+
     centerPoint = point
     center = Circle(centerPoint,radius)
     center.draw(win)
@@ -106,7 +127,8 @@ def sevenCircles(point, radius, depth, colour):
     sevenCircles(bottomRightPoint,radius,depth-1,colour)
 
 initializeColours()
-drawCircle(point,radius)
+initializeRatios()
+print(ratios)
 if(args.file):
     colour = colours[depth-1]
 sevenCircles(point,radius,depth,colour)

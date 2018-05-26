@@ -1,7 +1,6 @@
 from graphics import * 
 import random
-import sys
-import fileinput
+import shlex
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
@@ -16,17 +15,22 @@ xCoord = 500
 yCoord = 500
 point = Point(xCoord, yCoord)
 radius = 500
-layer = 0
-colour = []
+depth = 3
+colours = []
+ratio = []
+
 if(args.file):    
     with open(args.file) as file:
         inputs = []
-        for line in open('test.txt'):
-            line = [line.rstrip('\n')]
-            for item in line:
-                inputs.append(item)
-        print(inputs) 
-
+        for line in open(args.file):
+            line = shlex.split(line)
+            inputs.append(line)
+    depth = len(inputs)
+    """
+    for input in inputs:
+            if "/" in input[0]:
+                input[0] = input[0].split('/', 1)[-1]
+    """
 
 def colourGene():
     r = random.randrange(256)
@@ -34,14 +38,11 @@ def colourGene():
     b = random.randrange(256)
     return color_rgb(r,g,b)
 
-def colours_array(num):
-    num = int(num)
-
-    for x in range(1, num+1):
-        col = colour_choice()
-        colours.append(col)
-    return colour
-
+def initializeColours():
+    for i in range(len(inputs)):
+        inputColour = color_rgb((int(inputs[i][1])),int((inputs[i][2])),int((inputs[i][3])))
+        colours.append(inputColour)
+        colours.reverse()
 def drawCircle(point, radius):
     colour = colourGene()
     c = Circle(point, radius)    # instantiate a Circle object
@@ -56,6 +57,9 @@ def sevenCircles(point, radius, depth, colour):
 
     radius = radius / 3
 
+    if(args.file):
+        #radius = radius / (ratio[depth])
+        colour = colours[depth-1]
     centerPoint = point
     center = Circle(centerPoint,radius)
     center.draw(win)
@@ -91,7 +95,7 @@ def sevenCircles(point, radius, depth, colour):
     bottomRightPoint = Point(center.p2.getX(),center.p2.getY() + relative/1.34)
     bottomRight = Circle(bottomRightPoint,radius)
     bottomRight.draw(win)
-    bottomRight.setFill(colour) 
+    bottomRight.setFill(colour)
 
     sevenCircles(leftPoint,radius,depth -1,colour)
     sevenCircles(centerPoint,radius,depth-1,colour)
@@ -101,10 +105,9 @@ def sevenCircles(point, radius, depth, colour):
     sevenCircles(bottomLeftPoint,radius,depth-1,colour)
     sevenCircles(bottomRightPoint,radius,depth-1,colour)
 
+initializeColours()
+drawCircle(point,radius)
 if(args.file):
-  print(inputs[0][3:])
-  colour = inputs[0][3:]
-else: colour = colourGene()  
-#drawCircle(point,radius)
-#sevenCircles(point,radius,5,colour)
-#win.getMouse()
+    colour = colours[depth-1]
+sevenCircles(point,radius,depth,colour)
+win.getMouse()

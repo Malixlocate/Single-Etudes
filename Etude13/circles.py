@@ -17,7 +17,7 @@ yCoord = 500
 point = Point(xCoord, yCoord)
 radius = 500
 layer = 0
-
+colour = []
 if(args.file):    
     with open(args.file) as file:
         inputs = []
@@ -34,6 +34,13 @@ def colourGene():
     b = random.randrange(256)
     return color_rgb(r,g,b)
 
+def colours_array(num):
+    num = int(num)
+
+    for x in range(1, num+1):
+        col = colour_choice()
+        colours.append(col)
+    return colour
 
 def drawCircle(point, radius):
     colour = colourGene()

@@ -8,15 +8,15 @@ parser = ArgumentParser()
 parser.add_argument('-file', metavar='FILE', help='file to give circles inputs')
 args = parser.parse_args()
 
-windowWidth= 1000
+windowWidth = 1000
 windowHeight = 1000
-windowTitle = "Circ-les"
+windowTitle = "Wow. Much circles."
 win = GraphWin(windowTitle, windowWidth, windowHeight)
-xCoord = 500
-yCoord = 500
+xCoord = windowWidth / 2
+yCoord = windowHeight / 2
 point = Point(xCoord, yCoord)
 radius = 500
-depth = 3
+depth = 2
 colours = []
 ratios = []
 
@@ -26,29 +26,28 @@ if(args.file):
         for line in open(args.file):
             line = shlex.split(line)
             inputs.append(line)
-    depth = len(inputs)
-    """
-    for input in inputs:
-            if "/" in input[0]:
-                input[0] = input[0].split('/', 1)[-1]
-    """
+    depth = len(inputs) -1
 
+#Generate Colours based on RGB values
 def colourGene():
     r = random.randrange(256)
     g = random.randrange(256)
     b = random.randrange(256)
     return color_rgb(r,g,b)
 
+#Initlailizes the colours array
 def initializeColours():
     if(args.file):
         for i in range(len(inputs)):
             inputColour = color_rgb((int(inputs[i][1])),int((inputs[i][2])),int((inputs[i][3])))
             colours.append(inputColour)
             # colours.reverse()
-        else:
-            for i in range(depth):
-                colours.append(colourGene())
+    else:
+       for i in range(depth+1):
+         colours.append(colourGene())
+    colours.reverse()
 
+#Initliaizes the ratios array
 def initializeRatios():
     for i in range(len(inputs)):
         if "/" in inputs[i][0]:
@@ -58,28 +57,36 @@ def initializeRatios():
         ratios.append(inputRatio)
     ratios.reverse()
 
+#Draws an initial circle using a default or input set size
 def drawCircle(point, radius, colour):
 
     c = Circle(point, radius)    # instantiate a Circle object
     c.draw(win)                  # draw the Circle object to the window
     c.setFill(colour)
 
-def sevenCircles(point, radius, depth, colour):
+def drawCircles(point, radius, depth, colour):
     
 
     if depth == 0:
         return
-    drawCircle(point, radius, colour)
+
+    if (args.file):
+        radius = radius * ratios[depth]
+
+        if (depth == len(inputs) - 1):
+            drawCircle(point, radius, colour)
+    else:
+        drawCircle(point,radius,colour)
+
 
     if(args.file):
-        #radius = radius / (ratios[depth-1])
-        colour = colours[depth-1]
+            if ratios[depth] != ratios[depth-1]:
+                radius = radius * ratios[depth-1]
     else:
         radius = radius / 3
 
+    colour = colours[depth-1]
 
-
-    radius =radius/3
 
     centerPoint = point
     center = Circle(centerPoint,radius)
@@ -118,18 +125,23 @@ def sevenCircles(point, radius, depth, colour):
     bottomRight.draw(win)
     bottomRight.setFill(colour)
 
-    sevenCircles(leftPoint,radius,depth -1,colour)
-    sevenCircles(centerPoint,radius,depth-1,colour)
-    sevenCircles(rightPoint,radius,depth-1,colour) 
-    sevenCircles(topLeftPoint,radius,depth-1,colour)
-    sevenCircles(topRightPoint,radius,depth-1,colour)
-    sevenCircles(bottomLeftPoint,radius,depth-1,colour)
-    sevenCircles(bottomRightPoint,radius,depth-1,colour)
+    drawCircles(leftPoint, radius, depth - 1, colour)
+    drawCircles(centerPoint, radius, depth - 1, colour)
+    drawCircles(rightPoint, radius, depth - 1, colour)
+    drawCircles(topLeftPoint, radius, depth - 1, colour)
+    drawCircles(topRightPoint, radius, depth - 1, colour)
+    drawCircles(bottomLeftPoint, radius, depth - 1, colour)
+    drawCircles(bottomRightPoint, radius, depth - 1, colour)
 
 initializeColours()
-initializeRatios()
-print(ratios)
+
+print(colours)
 if(args.file):
-    colour = colours[depth-1]
-sevenCircles(point,radius,depth,colour)
+    initializeRatios()
+    ratio = ratios[depth]
+    colour = colours[depth]
+
+print(len(colours))
+colour = colours[depth]
+drawCircles(point, radius, depth, colour)
 win.getMouse()

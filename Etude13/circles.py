@@ -3,6 +3,8 @@ import random
 import shlex
 from argparse import ArgumentParser
 from fractions import Fraction
+from PIL import Image as NewImage
+import os
 
 parser = ArgumentParser()
 parser.add_argument('-file', metavar='FILE', help='file to give circles inputs')
@@ -59,35 +61,31 @@ def initializeRatios():
 
 #Draws an initial circle using a default or input set size
 def drawCircle(point, radius, colour):
-
     c = Circle(point, radius)    # instantiate a Circle object
     c.draw(win)                  # draw the Circle object to the window
     c.setFill(colour)
 
+#Draws 
 def drawCircles(point, radius, depth, colour):
-    
 
     if depth == 0:
         return
 
     if (args.file):
-        radius = radius * ratios[depth]
-
-        if (depth == len(inputs) - 1):
+        if (depth == len(inputs)-1):
+            radius = radius * ratios[depth]
             drawCircle(point, radius, colour)
     else:
         drawCircle(point,radius,colour)
 
-
     if(args.file):
-            if ratios[depth] != ratios[depth-1]:
-                radius = radius * ratios[depth-1]
+        radius = radius * ratios[depth-1]
+
     else:
         radius = radius / 3
 
     colour = colours[depth-1]
-
-
+    
     centerPoint = point
     center = Circle(centerPoint,radius)
     center.draw(win)
@@ -124,24 +122,30 @@ def drawCircles(point, radius, depth, colour):
     bottomRight = Circle(bottomRightPoint,radius)
     bottomRight.draw(win)
     bottomRight.setFill(colour)
+    
+    depth = depth -1
 
-    drawCircles(leftPoint, radius, depth - 1, colour)
-    drawCircles(centerPoint, radius, depth - 1, colour)
-    drawCircles(rightPoint, radius, depth - 1, colour)
-    drawCircles(topLeftPoint, radius, depth - 1, colour)
-    drawCircles(topRightPoint, radius, depth - 1, colour)
-    drawCircles(bottomLeftPoint, radius, depth - 1, colour)
-    drawCircles(bottomRightPoint, radius, depth - 1, colour)
+    drawCircles(leftPoint, radius, depth, colour)
+    drawCircles(centerPoint, radius, depth, colour)
+    drawCircles(rightPoint, radius, depth, colour)
+    drawCircles(topLeftPoint, radius, depth, colour)
+    drawCircles(topRightPoint, radius, depth, colour)
+    drawCircles(bottomLeftPoint, radius, depth, colour)
+    drawCircles(bottomRightPoint, radius, depth, colour)
 
 initializeColours()
 
-print(colours)
 if(args.file):
     initializeRatios()
     ratio = ratios[depth]
     colour = colours[depth]
 
-print(len(colours))
 colour = colours[depth]
 drawCircles(point, radius, depth, colour)
+
+win.postscript(file="circles.eps", colormode='color')
+img = NewImage.open("circles.eps")
+os.remove("circles.eps")
+img.save("circles.png","png")
+
 win.getMouse()

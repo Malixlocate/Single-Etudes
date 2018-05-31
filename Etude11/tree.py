@@ -13,28 +13,30 @@ class Node:
         if self.data:
             if self.add is None:
                 self.add = Node(value)
+                self.add.parent = self
             else:
                 self.add.insert(value)
 
             if self.multiply is None:
                 self.multiply = Node(value)
+                self.multiply.parent = self
             else:
                 self.multiply.insert(value)
         else:
             self.data = data
 
-    def printInorder(self):
+    def printInOrder(self):
         if self.add:
-            self.add.printInorder()
+            self.add.printInOrder()
         print(self.data),
         if self.multiply:
-            self.multiply.printInorder()
+            self.multiply.printInOrder()
 
 
 root = Node(1)
 root.insert(2)
 root.insert(3)
 
-root.printTree()
+root.printInOrder()
 
 
